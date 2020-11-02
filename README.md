@@ -1,4 +1,4 @@
-#Livepeer Realtime Audio Transcription
+# Livepeer Realtime Audio Transcription
 
 Livepeer Realtime Audio Transcription is a real time speech to text PoC that produces transcription of audio broadcast.
 It is based on Mozilla's [deepspeech](https://github.com/mozilla/DeepSpeech), which is the tensorflow implementation of Baidu's speech recognition research for speech to text transcription.
