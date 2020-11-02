@@ -1,7 +1,7 @@
 # Livepeer Realtime Audio Transcription
 
 Livepeer Realtime Audio Transcription is a real time speech to text PoC that produces transcription of audio broadcast.
-It is based on Mozilla's [deepspeech](https://github.com/mozilla/DeepSpeech), which is the tensorflow implementation of Baidu's speech recognition research for speech to text transcription.
+It is based on Mozilla's [deepspeech](https://github.com/mozilla/DeepSpeech), which is the tensorflow implementation based on [Baidu's Deep Speech research paper](https://arxiv.org/abs/1412.5567) for speech to text transcription.
 
 A Nvidia GPU (pascal or higher) is needed for real-time speech-to-text transcription.
 
@@ -33,13 +33,32 @@ export CGO_CFLAGS="-I$HOME/compiled/include"
 
 export CGO_LDFLAGS="-L$HOME/compiled/lib"
 
+Clone the repository
+
+```
+git clone https://github.com/woody0105/LRAT.git
+
 ```
 
-git clone -b deepspeech_ws https://github.com/oscar-davids/lpmsdemo.git
+Copy deepspeech library and header files and build.
 
-cd lpmsdemo 
+```
+cd LRAT
+
+cp -r deepspeech/deepspeech $HOME/compiled/include/
+cp deepspeech/libdeepspeech.so $HOME/compiled/lib/  
 
 go build example/deepspeech_websocket.go
 
 ```
+
+### Test
+Run the websocket server to listen on port 8081.
+```
+./deepspeech_websocket -addr=0.0.0.0:8081
+```
+
+Using mist server, stream audio packets to the websocket server.
+
+
 
