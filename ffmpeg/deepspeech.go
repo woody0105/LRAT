@@ -16,6 +16,18 @@ import (
 // #include "lpms_deepspeech.h"
 import "C"
 
+const (
+	MP2 = iota + 0x15000
+	MP3
+	AAC
+)
+
+var AudioCodecLookup = map[string]int{
+	"AAC": AAC,
+	"MP3": MP3,
+	"MP2": MP2,
+}
+
 type TimedPacket struct {
 	Packetdata APacket
 	Timestamp  uint64
@@ -115,9 +127,9 @@ func (t *Transcriber) StopTranscriber() {
 	t = nil
 }
 
-func (t *Transcriber) TranscriberCodecInit() {
+func (t *Transcriber) TranscriberCodecInit(codec_id int) {
 	codec_params := t.codec_params
-	C.t_audio_codec_init(codec_params)
+	C.t_audio_codec_init(C.int(codec_id), codec_params)
 }
 
 func (t *Transcriber) TranscriberCodecDeinit() {

@@ -140,7 +140,13 @@ func handleconnections(w http.ResponseWriter, r *http.Request) {
 
 	t := ffmpeg.NewTranscriber(clientId)
 	t.Conn = c
-	t.TranscriberCodecInit()
+
+	p, ok := ffmpeg.AudioCodecLookup[codec]
+	if !ok {
+		panic(fmt.Sprintf("Invalid Codec %s.\n", codec))
+	}
+	t.TranscriberCodecInit(p)
+
 	defer t.TranscriberCodecDeinit()
 	defer t.StopTranscriber()
 
@@ -204,7 +210,6 @@ func handleconnections1(w http.ResponseWriter, r *http.Request) {
 		log.Print("audio meta data not present in header, handshake failed.")
 		return
 	}
-
 	respheader := make(http.Header)
 	respheader.Add("Sec-WebSocket-Protocol", "speechtotext.livepeer.com")
 	c, err := upgrader.Upgrade(w, r, respheader)
@@ -212,16 +217,19 @@ func handleconnections1(w http.ResponseWriter, r *http.Request) {
 		log.Print("upgrade:", err)
 		return
 	}
-	go handlemsg1(w, r, c)
+	go handlemsg1(w, r, c, codec)
 }
 
-func handlemsg1(w http.ResponseWriter, r *http.Request, conn *websocket.Conn) {
+func handlemsg1(w http.ResponseWriter, r *http.Request, conn *websocket.Conn, codec string) {
 	clientId := RandName()
 	t := ffmpeg.NewTranscriber(clientId)
 	t.Conn = conn
-	t.TranscriberCodecInit()
-	// defer t.TranscriberCodecDeinit()
-	// defer t.StopTranscriber()
+	p, ok := ffmpeg.AudioCodecLookup[codec]
+	if !ok {
+		panic(fmt.Sprintf("Invalid Codec %s.\n", codec))
+	}
+	t.TranscriberCodecInit(p)
+	fmt.Println("audio codec id:", codec)
 	var last string
 	var printed string
 	for {

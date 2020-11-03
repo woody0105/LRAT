@@ -352,24 +352,24 @@ void lpms_codec_stop(codec_params* h){
     free(h);    
 }
 
-void t_audio_codec_init(codec_params *codec_params)
+void t_audio_codec_init(int decoder_id, codec_params *codec_params)
 {
-    codec_params->codec = avcodec_find_decoder(AV_CODEC_ID_AAC);
+    codec_params->codec = avcodec_find_decoder(decoder_id);
     if (!codec_params->codec) {
         fprintf(stderr, "Codec not found\n");
-        exit(1);
+        return;
     }
 
     codec_params->c = avcodec_alloc_context3(codec_params->codec);
     if (!codec_params->c) {
         fprintf(stderr, "Could not allocate audio codec context\n");
-        exit(1);
+        return;
     }
 
     /* open it */
     if (avcodec_open2(codec_params->c, codec_params->codec, NULL) < 0) {
         fprintf(stderr, "Could not open codec\n");
-        exit(1);
+        return;
     }
     printf("audio codec initialized.\n");
 }
